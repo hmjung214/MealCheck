@@ -231,9 +231,9 @@ sudo chown -R ubuntu:ubuntu ~/projects/MealCheck
 
 ### 2️⃣ 백엔드 기초 설계 (완료)
 
-* [ ] DB 스키마 설계 (users / meal_logs)
-* [ ] DB 커넥션 풀 구성
-* [ ] API 라우트 구조 분리
+* [x] DB 스키마 설계 (users / meal_logs)
+* [x] DB 커넥션 풀 구성
+* [x] API 라우트 구조 분리
 
 ---
 
