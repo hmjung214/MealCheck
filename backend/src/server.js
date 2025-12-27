@@ -1,9 +1,20 @@
 const express = require('express');
+const db = require('./db');
+const mealRoutes = require('./routes/meal');
 
 const app = express();
+app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({ message: 'MiracleAGI MealCheck Backend Running' });
+app.use('/api', mealRoutes);
+
+app.get('/health', async (req, res) => {
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected' });
+  } catch (err) {
+    console.error('DB not ready:', err.code || err.message);
+    res.status(500).json({ status: 'error', db: 'disconnected' });
+  }
 });
 
 const PORT = process.env.PORT || 3000;

@@ -56,11 +56,14 @@ QR 코드 기반으로 직원 및 손님의 식사 여부를 간단히 기록하
 ```
 MealCheck/
 ├─ backend/
-│  ├─ src/
-│  │  └─ server.js
-│  ├─ Dockerfile
-│  ├─ package.json
-│  └─ package-lock.json
+│ ├─ src/
+│ │ ├─ server.js # Express 서버 엔트리
+│ │ ├─ db.js # MariaDB 커넥션 풀
+│ │ └─ routes/
+│ │ └─ meal.js # 식사 체크 / 통계 API
+│ ├─ Dockerfile
+│ ├─ package.json
+│ └─ package-lock.json
 ├─ docker-compose.yml
 ├─ .env.example
 ├─ .gitignore
@@ -132,20 +135,42 @@ docker compose logs backend --tail=100
 
 ---
 
-### 6️⃣ 내부망 접속 테스트 (HTTP)
+### 6️⃣ 내부망 API 테스트 (HTTP)
 
-```
-http://<SERVER_LAN_IP>:3000
+```bash
+curl http://<SERVER_LAN_IP>:3000/health
 ```
 
 정상 응답:
 
 ```json
-{ "message": "MiracleAGI MealCheck Backend Running" }
+{ "status": "ok", "db": "connected" }
 ```
 
-> ⚠️ 현재는 HTTP 테스트 단계
-> HTTPS는 Cloudflare Tunnel 적용 예정
+**식사 체크**
+```bash
+curl -X POST http://<SERVER_LAN_IP>:3000/api/check-in \
+  -H "Content-Type: application/json" \
+  -d '{"phone_last4":"1234"}'
+```
+
+
+응답 예시:
+
+* 성공: 식사 체크 완료
+* 중복: 이미 오늘 식사하셨습니다.
+* 미등록: 사용자를 찾을 수 없습니다.
+
+**오늘 식수 인원 조회**
+```bash
+curl http://<SERVER_LAN_IP>:3000/api/today-count
+```
+```json
+{ "count": 1 }
+```
+
+⚠️ 현재는 HTTP 테스트 단계
+HTTPS는 Cloudflare Tunnel 적용 예정
 
 ---
 
@@ -204,18 +229,19 @@ sudo chown -R ubuntu:ubuntu ~/projects/MealCheck
 
 ---
 
-### 2️⃣ 백엔드 기초 설계 (다음 단계)
+### 2️⃣ 백엔드 기초 설계 (완료)
 
-* [ ] DB 스키마 설계 (직원 / 토큰 / 식사 로그 / 손님)
-* [ ] DB 연결 모듈 구성
-* [ ] API 기본 구조 정리 (routes / controllers)
+* [ ] DB 스키마 설계 (users / meal_logs)
+* [ ] DB 커넥션 풀 구성
+* [ ] API 라우트 구조 분리
 
 ---
 
 ### 3️⃣ 핵심 기능
 
-* [ ] 식사 체크 API (`POST /check-in`)
-* [ ] 중복 식사 방지 로직
+* [x] 식사 체크 API (`POST /apu/check-in`)
+* [x] 중복 식사 방지 로직
+* [x] 오늘 식수 인원 조회 (`GET /api/today-count`)
 * [ ] 디바이스 토큰 발급/검증
 * [ ] 손님 식사 수동 추가
 

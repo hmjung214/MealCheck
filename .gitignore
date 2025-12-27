@@ -1,19 +1,24 @@
 # =========================
-# Node.js
+# Node.js / Package managers
 # =========================
+node_modules/
 **/node_modules/
-**/npm-debug.log*
-**/yarn-debug.log*
-**/yarn-error.log*
-**/pnpm-debug.log*
-**/.npm
-**/.cache
 
-# build outputs (if you add frontend later)
-**/dist/
-**/build/
-**/.next/
-**/out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+.npm
+.cache
+
+# =========================
+# Build outputs (frontend 대비)
+# =========================
+dist/
+build/
+.next/
+out/
 
 # =========================
 # Environment / Secrets
@@ -49,20 +54,19 @@ Desktop.ini
 *.iml
 
 # =========================
-# Docker
+# Docker / Container data
 # =========================
-# If you later bind-mount DB data to a local folder, ignore it
+# 로컬 바인드 마운트 DB 데이터 (사용 시)
 docker-data/
-**/docker-data/
-**/data/
-**/db-data/
-**/mariadb-data/
+data/
+db-data/
+mariadb-data/
 
-# Docker override files (optional)
+# Docker override files
 docker-compose.override.yml
 
 # =========================
-# Certificates / Keys (if you add HTTPS locally)
+# Certificates / Keys
 # =========================
 *.pem
 *.key

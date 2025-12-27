@@ -8,7 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # 의존성 설치
-RUN npm install --production
+RUN npm install
+# RUN npm install --production # 운영시 사용
 
 # 나머지 소스 복사
 COPY . .
