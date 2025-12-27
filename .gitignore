@@ -1,0 +1,77 @@
+# =========================
+# Node.js
+# =========================
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+**/.npm
+**/.cache
+
+# build outputs (if you add frontend later)
+**/dist/
+**/build/
+**/.next/
+**/out/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Logs / Runtime
+# =========================
+logs/
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+.idea/
+*.iml
+
+# =========================
+# Docker
+# =========================
+# If you later bind-mount DB data to a local folder, ignore it
+docker-data/
+**/docker-data/
+**/data/
+**/db-data/
+**/mariadb-data/
+
+# Docker override files (optional)
+docker-compose.override.yml
+
+# =========================
+# Certificates / Keys (if you add HTTPS locally)
+# =========================
+*.pem
+*.key
+*.crt
+
+# =========================
+# Temporary / Backup files
+# =========================
+*.swp
+*.swo
+*~
+*.bak
