@@ -5,6 +5,7 @@ const db = require('./db/pool');
 const mealRoutes = require('./routes/meal');
 const adminRoutes = require('./routes/admin');
 const statsRoutes = require('./routes/stats');
+const publicStatsRoutes = require('./routes/publicStats');
 
 const path = require('path');
 
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use('/api', mealRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/public/stats', publicStatsRoutes);
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -3,26 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MealCheck</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>MealCheck 식수 현황</title>
+  <link rel="stylesheet" href="/public/style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🍽 식사 체크</h1>
+    <h1>🍽 오늘의 식수 현황</h1>
 
-    <input
-      type="tel"
-      id="phone"
-      placeholder="휴대폰 끝 4자리"
-      maxlength="4"
-      inputmode="numeric"
-    />
+    <div class="card">
+      <p>날짜</p>
+      <strong id="today-date">-</strong>
+    </div>
 
-    <button id="checkBtn">식사하기</button>
+    <div class="card">
+      <p>직원</p>
+      <strong id="today-staff">0</strong>
+    </div>
 
-    <p id="result"></p>
+    <div class="card">
+      <p>손님</p>
+      <strong id="today-guests">0</strong>
+    </div>
+
+    <div class="card total">
+      <p>총 식수</p>
+      <strong id="today-total">0</strong>
+    </div>
+
+    <hr />
+
+    <h2>📊 이번 달 누적</h2>
+
+    <div class="card">
+      <p>직원</p>
+      <strong id="month-staff">0</strong>
+    </div>
+
+    <div class="card">
+      <p>손님</p>
+      <strong id="month-guests">0</strong>
+    </div>
+
+    <div class="card total">
+      <p>총 식수</p>
+      <strong id="month-total">0</strong>
+    </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="/public/app.js"></script>
 </body>
 </html>

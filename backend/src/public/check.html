@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MealCheck 식사 체크</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🍽 식사 체크</h1>
+
+    <div class="card">
+      <p>휴대폰 끝 4자리</p>
+      <input id="phone" maxlength="4" inputmode="numeric" placeholder="예: 1234" />
+      <button id="save">저장</button>
+      <small id="saved" style="display:block; margin-top:8px; color:#666;"></small>
+    </div>
+
+    <div class="card total">
+      <p>오늘 식사하셨나요?</p>
+      <button id="checkin" style="width:100%; padding:12px; font-size:18px;">식사했어요</button>
+      <small id="result" style="display:block; margin-top:10px;"></small>
+    </div>
+
+    <div class="card">
+        <p>식수 현황</p>
+        <button id="goStats" style="width:100%; padding:12px; font-size:16px;">
+            📊 오늘 식수 현황 보기
+        </button>
+        <small style="display:block; margin-top:6px; color:#777;">
+            (식당·회계 전용)
+        </small>
+    </div>
+
+  </div>
+
+  <script src="/public/check.js"></script>
+</body>
+</html>
