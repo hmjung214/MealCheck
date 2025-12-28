@@ -1,11 +1,16 @@
 const express = require('express');
 const db = require('./db');
 const mealRoutes = require('./routes/meal');
+const path = require('path');
 
 const app = express();
+
+
 app.use(express.json());
 
 app.use('/api', mealRoutes);
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/health', async (req, res) => {
   try {
