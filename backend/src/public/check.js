@@ -47,11 +47,18 @@ checkinBtn.addEventListener('click', async () => {
 
 const statsBtn = document.getElementById('goStats');
 
-// 조회 전용 토큰 (운영 시 env/서버 주입으로 교체 가능)
-const VIEW_TOKEN = 'MEALCHECK_VIEW_TOKEN_2025';
-
 statsBtn.addEventListener('click', () => {
-  window.location.href = `/public/index.html?token=${VIEW_TOKEN}`;
+  // 식당/회계 전용: 로컬에 토큰이 없으면 1회 입력받아 저장
+  let viewToken = localStorage.getItem('view_token');
+
+  if (!viewToken) {
+    viewToken = prompt('통계 조회 토큰을 입력하세요 (식당/회계 전용)');
+    if (!viewToken) return;
+    localStorage.setItem('view_token', viewToken.trim());
+    viewToken = viewToken.trim();
+  }
+
+  window.location.href = `/public/index.html?token=${encodeURIComponent(viewToken)}`;
 });
 
 loadPhone();
