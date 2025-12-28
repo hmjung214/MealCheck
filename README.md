@@ -1,4 +1,3 @@
-```md
 # 🍽 MealCheck
 
 **MiracleAGI 사내 식수 인원 체크 시스템**
@@ -284,6 +283,3 @@ GET /api/public/stats/month?month=YYYY-MM&token=...
 > “직원은 귀찮지 않게,
 > 관리자는 정확하게,
 > 식당과 회계는 필요한 정보만.”
-
-```
-```
