@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const db = require('../db/pool');
 
 // 식사 체크
 router.post('/check-in', async (req, res) => {

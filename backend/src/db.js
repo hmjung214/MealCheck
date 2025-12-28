@@ -1,16 +1,3 @@
-const mysql = require('mysql2/promise');
-
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  timezone: '+09:00',
-  ssl: false
-});
-
-module.exports = pool;
+// backend/src/db.js
+// (레거시 호환용) 기존 require('./db') 를 유지하면서 내부는 pool 사용
+module.exports = require('./db/pool');

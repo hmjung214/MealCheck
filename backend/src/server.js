@@ -1,6 +1,11 @@
 const express = require('express');
-const db = require('./db');
+const db = require('./db/pool');
+
+// 라우트 임포트
 const mealRoutes = require('./routes/meal');
+const adminRoutes = require('./routes/admin');
+const statsRoutes = require('./routes/stats');
+
 const path = require('path');
 
 const app = express();
@@ -8,7 +13,10 @@ const app = express();
 
 app.use(express.json());
 
+// 라우트 설정
 app.use('/api', mealRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -23,6 +31,4 @@ app.get('/health', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
