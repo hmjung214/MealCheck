@@ -50,6 +50,8 @@ CREATE TABLE guests (
 );
 
 INSERT INTO users (phone_last4) VALUES ('1234');
+INSERT INTO users (phone_last4) VALUES ('2345');
+INSERT INTO users (phone_last4) VALUES ('3456');
 
 INSERT INTO user_roles (user_id, role_id)
 VALUES
@@ -57,3 +59,14 @@ VALUES
   (1, (SELECT id FROM roles WHERE name='admin')),
   (1, (SELECT id FROM roles WHERE name='accounting'));
 
+INSERT INTO user_roles (user_id, role_id)
+VALUES
+  (2, (SELECT id FROM roles WHERE name='staff')),
+  (2, (SELECT id FROM roles WHERE name='admin')),
+  (2, (SELECT id FROM roles WHERE name='accounting'));
+
+INSERT INTO user_roles (user_id, role_id)
+VALUES
+  (3, (SELECT id FROM roles WHERE name='staff')),
+  (3, (SELECT id FROM roles WHERE name='admin')),
+  (3, (SELECT id FROM roles WHERE name='accounting'));
