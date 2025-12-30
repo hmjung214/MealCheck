@@ -3,52 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MealCheck 식수 현황</title>
+  <title>MealCheck · 식수 현황</title>
   <link rel="stylesheet" href="/public/style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>🍽 오늘의 식수 현황</h1>
+  <main class="container">
+    <header class="header">
+      <h1>MealCheck</h1>
+      <p class="subtitle">오늘 식수 현황</p>
+    </header>
 
-    <div class="card">
-      <p>날짜</p>
-      <strong id="today-date">-</strong>
-    </div>
+    <section class="card stats">
+      <div class="stat-item">
+        <span class="label">직원 식사</span>
+        <strong id="staffCount">-</strong>
+      </div>
+      <div class="stat-item">
+        <span class="label">손님</span>
+        <strong id="guestCount">-</strong>
+      </div>
+      <div class="stat-item total">
+        <span class="label">총 식수</span>
+        <strong id="totalCount">-</strong>
+      </div>
+    </section>
 
-    <div class="card">
-      <p>직원</p>
-      <strong id="today-staff">0</strong>
-    </div>
-
-    <div class="card">
-      <p>손님</p>
-      <strong id="today-guests">0</strong>
-    </div>
-
-    <div class="card total">
-      <p>총 식수</p>
-      <strong id="today-total">0</strong>
-    </div>
-
-    <hr />
-
-    <h2>📊 이번 달 누적</h2>
-
-    <div class="card">
-      <p>직원</p>
-      <strong id="month-staff">0</strong>
-    </div>
-
-    <div class="card">
-      <p>손님</p>
-      <strong id="month-guests">0</strong>
-    </div>
-
-    <div class="card total">
-      <p>총 식수</p>
-      <strong id="month-total">0</strong>
-    </div>
-  </div>
+    <section class="card">
+      <p class="hint">
+        ⏱ 5분마다 자동으로 갱신됩니다.<br/>
+        개인정보는 표시되지 않습니다.
+      </p>
+    </section>
+  </main>
 
   <script src="/public/app.js"></script>
 </body>

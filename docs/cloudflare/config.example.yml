@@ -1,0 +1,7 @@
+tunnel: mealcheck
+credentials-file: /etc/cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  - hostname: meal.miracle-agi.com
+    service: http://localhost:3000
+  - service: http_status:404

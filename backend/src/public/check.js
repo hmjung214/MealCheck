@@ -4,6 +4,26 @@ const checkinBtn = document.getElementById('checkin');
 const savedText = document.getElementById('saved');
 const resultText = document.getElementById('result');
 
+function generateDeviceToken() {
+  if (window.crypto && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+function getDeviceToken() {
+  let token = localStorage.getItem('device_token');
+  if (!token) {
+    token = generateDeviceToken();
+    localStorage.setItem('device_token', token);
+  }
+  return token;
+}
+
 function loadPhone() {
   const v = localStorage.getItem('phone_last4');
   if (v) {
@@ -29,36 +49,41 @@ checkinBtn.addEventListener('click', async () => {
     return;
   }
 
+  const device_token = getDeviceToken();
   resultText.textContent = '처리 중...';
+  checkinBtn.disabled = true;
 
   try {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 5000);
+
     const res = await fetch('/api/check-in', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone_last4 })
+      body: JSON.stringify({ phone_last4, device_token }),
+      signal: controller.signal
     });
 
     const data = await res.json();
+
+    if (!res.ok) {
+      resultText.textContent = data.message || '오류 발생';
+      resultText.className = 'result error';
+      return;
+    }
+
     resultText.textContent = data.message || '완료';
+    resultText.className = 'result success';
   } catch (e) {
-    resultText.textContent = '오류가 발생했습니다.';
+    console.error(e);
+    resultText.textContent = '네트워크 오류가 발생했습니다.';
+    resultText.className = 'result error';
+  } finally {
+    checkinBtn.disabled = false;
   }
-});
-
-const statsBtn = document.getElementById('goStats');
-
-statsBtn.addEventListener('click', () => {
-  // 식당/회계 전용: 로컬에 토큰이 없으면 1회 입력받아 저장
-  let viewToken = localStorage.getItem('view_token');
-
-  if (!viewToken) {
-    viewToken = prompt('통계 조회 토큰을 입력하세요 (식당/회계 전용)');
-    if (!viewToken) return;
-    localStorage.setItem('view_token', viewToken.trim());
-    viewToken = viewToken.trim();
-  }
-
-  window.location.href = `/public/index.html?token=${encodeURIComponent(viewToken)}`;
 });
 
 loadPhone();
+
+// 개발/관리자용 토큰 초기화 (필요 시)
+// window.resetDeviceToken = () => localStorage.removeItem('device_token');

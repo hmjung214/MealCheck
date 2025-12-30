@@ -3,37 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MealCheck 식사 체크</title>
+  <title>MealCheck · 식사 체크</title>
   <link rel="stylesheet" href="/public/style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>🍽 식사 체크</h1>
+  <main class="container">
+    <header class="header">
+      <h1>🍽 MealCheck 🍽</h1>
+      <p class="subtitle">식사 체크</p>
+    </header>
 
-    <div class="card">
-      <p>휴대폰 끝 4자리</p>
-      <input id="phone" maxlength="4" inputmode="numeric" placeholder="예: 1234" />
-      <button id="save">저장</button>
-      <small id="saved" style="display:block; margin-top:8px; color:#666;"></small>
-    </div>
+    <section class="card">
+      <label for="phone" class="label">휴대폰 끝 4자리</label>
+      <div class="input-row">
+        <input
+          id="phone"
+          type="text"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="[0-9]{4}"
+          autocomplete="off"
+          placeholder="0000"
+          aria-label="휴대폰 번호 끝 4자리"
+        />
+        <button id="save" type="button" class="btn secondary">저장</button>
+      </div>
+      <small id="saved" class="hint"></small>
+    </section>
 
-    <div class="card total">
-      <p>오늘 식사하셨나요?</p>
-      <button id="checkin" style="width:100%; padding:12px; font-size:18px;">식사했어요</button>
-      <small id="result" style="display:block; margin-top:10px;"></small>
-    </div>
+    <section class="card highlight">
+      <p class="question">오늘 식사하셨나요?</p>
+      <button id="checkin" type="button" class="btn primary">
+        식사했어요
+      </button>
+      <small id="result" class="result"></small>
+    </section>
 
-    <div class="card">
-        <p>식수 현황</p>
-        <button id="goStats" style="width:100%; padding:12px; font-size:16px;">
-            📊 오늘 식수 현황 보기
-        </button>
-        <small style="display:block; margin-top:6px; color:#777;">
-            (식당·회계 전용)
-        </small>
-    </div>
-
-  </div>
+    <section class="card">
+      <p class="label">식수 현황</p>
+      <button id="goStats" type="button" class="btn ghost">
+        오늘 식수 현황 보기
+      </button>
+      <small class="hint">식당 · 회계 전용</small>
+    </section>
+  </main>
 
   <script src="/public/check.js"></script>
 </body>

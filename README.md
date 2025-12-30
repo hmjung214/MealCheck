@@ -54,7 +54,7 @@ QR 스캔
 - **Docker / Docker Compose**
 - **Ubuntu Server**
 - VS Code Remote SSH
-- (예정) Cloudflare Tunnel + HTTPS
+- **Cloudflare Tunnel (예정 → 적용 중)**
 
 ---
 
@@ -65,7 +65,7 @@ QR 스캔
 - React / Next.js RSC 취약점(CVE-2025-55182) 회피
 - `.env` 파일 Git 미포함
 - 통계 조회 시 **개인 식별 정보 미노출**
-- 실사용 시 IP 직접 노출 금지 → HTTPS 종단 처리 예정
+- 실사용 시 IP 직접 노출 금지 → HTTPS 종단 처리
 
 ---
 
@@ -92,7 +92,7 @@ MealCheck/
 │ │   ├─ check.html           # 직원 식사 체크 화면
 │ │   ├─ check.js
 │ │   ├─ index.html           # 통계 조회 화면
-│ │   ├─ app.js               # 통계 화면 JS (자동 새로고침)
+│ │   ├─ app.js               # 통계 화면 JS
 │ │   └─ style.css
 │ ├─ Dockerfile
 │ ├─ package.json
@@ -130,96 +130,138 @@ docker compose logs backend --tail=100
 
 ---
 
+## 🌐 Cloudflare Tunnel 기반 개발/운영 환경 설정 (단계별)
+
+> **목적**
+> 내부망(사설 IP) 서버를 외부에 직접 노출하지 않고,
+> `HTTPS + 도메인`으로 안전하게 접근하기 위함
+
+---
+
+### 1️⃣ Cloudflare 계정 및 도메인 준비
+
+* Cloudflare 계정 생성
+* 기존 도메인 `miracle-agi.com` Cloudflare에 등록
+* 네임서버(NS)를 Cloudflare로 변경
+
+---
+
+### 2️⃣ cloudflared 설치 (서버)
+
+```bash
+sudo apt update
+sudo apt install -y cloudflared
+```
+
+설치 확인:
+
+```bash
+cloudflared --version
+```
+
+---
+
+### 3️⃣ Cloudflare 로그인 (Origin 인증서 발급)
+
+```bash
+sudo cloudflared tunnel login
+```
+
+* 브라우저에서 Cloudflare 로그인
+* 인증서가 `/root/.cloudflared/cert.pem`에 저장됨
+
+---
+
+### 4️⃣ Named Tunnel 생성
+
+```bash
+sudo cloudflared tunnel create mealcheck
+```
+
+생성 결과:
+
+* Tunnel ID 발급
+* `/root/.cloudflared/<TUNNEL_ID>.json` 생성
+
+---
+
+### 5️⃣ 서브도메인 연결
+
+예시: `meal.miracle-agi.com`
+
+```bash
+sudo cloudflared tunnel route dns mealcheck meal.miracle-agi.com
+```
+
+> ⚠️ 동일한 호스트명이 이미 DNS에 있으면 기존 레코드 삭제 후 재시도
+
+---
+
+### 6️⃣ Tunnel 설정 파일 작성
+
+`/etc/cloudflared/config.yml`
+
+```yaml
+tunnel: <TUNNEL_ID>
+credentials-file: /root/.cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  - hostname: meal.miracle-agi.com
+    service: http://localhost:3000
+  - service: http_status:404
+```
+
+---
+
+### 7️⃣ Tunnel 실행 (서비스 등록 권장)
+
+```bash
+sudo cloudflared service install
+sudo systemctl start cloudflared
+sudo systemctl status cloudflared
+```
+
+---
+
+### 8️⃣ 최종 접속 확인
+
+```
+https://meal.miracle-agi.com
+```
+
+* 내부 IP 노출 ❌
+* HTTPS 자동 적용 ⭕
+* QR 코드에는 **도메인 URL만 사용**
+
+---
+
 ## 🗄 DB 구조 요약
 
 ### 주요 테이블
 
-* `users` : 직원 정보 (phone_last4 기준)
-* `roles` : 역할 정의 (staff, admin, owner, accounting)
-* `user_roles` : 사용자-역할 매핑 (N:M)
-* `meal_logs` : 직원 식사 기록 (1일 1회 제한)
-* `guests` : 손님 식사 수
-* `view_tokens` : 조회 전용 토큰
+* `users`
+* `roles`
+* `user_roles`
+* `meal_logs`
+* `guests`
+* `view_tokens`
 
 ---
 
 ## 👥 권한 모델
 
-* **직원 (Staff)**
-
-  * 식사 체크
-  * 통계 직접 접근 ❌
-
-* **관리자 (Admin / IT)**
-
-  * 직원/손님 관리
-  * 통계 조회 가능
-
-* **식당 (Owner)**
-
-  * 오늘/월별 식수 인원 조회
-  * 개인 식별 정보 접근 ❌
-
-* **회계 (Accounting)**
-
-  * 월별 집계 데이터 조회
-  * 개인 식별 정보 없음
-
-※ 한 사용자는 **여러 역할을 동시에 가질 수 있음**
+* **직원 (Staff)**: 식사 체크
+* **관리자 (Admin)**: 관리 + 통계
+* **식당 (Owner)**: 통계만
+* **회계 (Accounting)**: 월별 집계
 
 ---
 
 ## 📡 API 요약
 
-### 직원 식사 체크
-
-```
-POST /api/check-in
-```
-
-### 관리자
-
-```
-POST /api/admin/guests
-```
-
-### 내부 통계 (권한 필요)
-
-```
-GET /api/stats/today
-GET /api/stats/month
-```
-
-### 조회 전용 통계 (View Token)
-
-```
-GET /api/public/stats/today?token=...
-GET /api/public/stats/month?month=YYYY-MM&token=...
-```
-
----
-
-## 🖥 프론트 화면
-
-### 직원 식사 체크
-
-```
-/public/check.html
-```
-
-* 휴대폰 끝 4자리 최초 1회 저장
-* “식사했어요” 버튼
-* 통계 보기 버튼 제공
-
-### 통계 조회 화면
-
-```
-/public/index.html?token=VIEW_TOKEN
-```
-
-* 오늘 / 월 누적 식수 표시
-* **5분 자동 새로고침**
-* 개인정보 없음
+* `POST /api/check-in`
+* `GET /api/stats/today`
+* `GET /api/public/stats/today?token=...`
 
 ---
 
@@ -227,54 +269,33 @@ GET /api/public/stats/month?month=YYYY-MM&token=...
 
 ### Day 1 – 환경/인프라
 
-* [x] Ubuntu 서버 + Docker 구성
-* [x] Node.js 20.19.4 LTS 고정
-* [x] 기본 서버 구동
+* [x] Docker 환경 구성
 
-### Day 2 – DB/백엔드 기초
+### Day 2 – DB/백엔드
 
-* [x] DB 스키마 설계 및 init.sql
-* [x] 커넥션 풀 구성
-* [x] API 구조 분리
+* [x] DB 스키마 / init.sql
+* 복구용 SQL 스크립트
+* `docker exec -i mealcheck-db mariadb -uroot -prootpass meal < backend/src/db/init.sql`
 
-### Day 3 – 핵심 기능/통계
+### Day 3 – 핵심 기능
 
-* [x] 식사 체크 API
-* [x] 중복 식사 방지
-* [x] 역할 기반 권한 시스템
-* [x] 오늘 / 월별 통계 API
+* [x] 식사 체크 / 통계
 
 ### Day 4 – UX 고도화
 
-* [x] 조회 전용 View Token 도입
-* [x] 직원 체크 화면 + 통계 화면 분리
-* [x] 단일 QR UX 확정
-* [x] 통계 화면 자동 새로고침
-* [x] 실사용 가능한 MVP 완성
+* [x] 단일 QR + View Token
 
-### 5️⃣ 보안 & 배포
+### Day 5 – 보안 & 배포
 
-* [ ] Cloudflare Tunnel 연결
-* [ ] 도메인 연결
-* [ ] HTTPS 자동 인증서 적용
-* [ ] IP 직접 노출 차단
-* [ ] QR 코드용 최종 URL 확정
+* [x] Cloudflare Tunnel 구성
+* [ ] 운영 자동화 / 문서 보완
 
 ---
 
 ## 🎯 현재 상태 요약
 
-> **사내 배포 및 시범 운영이 가능한 MVP 상태**
-> 직원은 빠르게 체크, 식당·회계는 숫자만 확인 가능
-
----
-
-## 🔜 다음 단계 (예정)
-
-* Cloudflare Tunnel + HTTPS
-* QR 최종 URL 확정 및 배포 가이드
-* 운영/장애 대응 문서
-* (선택) 관리자 UI 고도화
+> **HTTPS 기반 외부 접속 가능,
+> 실사용 가능한 사내 식수 체크 MVP 완성**
 
 ---
 
